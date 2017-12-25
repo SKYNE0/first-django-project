@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎来到仓库管理系统</title>
+    <link rel="stylesheet" href="{% static 'css/semantic.css' %}" media="screen" title="no title" charset="utf-8">
+</head>
+<body style="background: url({% static 'images/login_bg.jpg' %});background-size: cover;">
+    <div class="ui img">
+        <a href="http://www.ayit.edu.cn/" target="_blank">
+            <img src="{% static 'images/SchoolLogo.png' %}" class="ui img " style="position: absolute;top: 3%;left: 1%;">
+        </a>
+    </div>
+    <div class="ui bottom">
+        <a href="/admin" target="_blank">
+            <button  class="ui red submit button" style="position: absolute;top: 3%;left: 90%;">管理员入口</button>
+        </a>
+    </div>
+    <!--<div class="ui bottom">-->
+        <!--<a href="/admin" target="_blank">-->
+            <!--<button  class="ui red submit button" style="position: absolute;top: 3%;left: 80%;">新用户注册</button>-->
+        <!--</a>-->
+    <!--</div>-->
+    {% if messages %}
+       <ul class=" ui red header messages" style="background-color: ghostwhite; position: absolute;top: 65%;left: 42%;">
+           {% for message in messages %}
+           <P {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</P>
+           {% endfor %}
+       </ul>
+    {% endif %}
+   <div class="ui center segment"
+                style=" min-height: 300px;
+                opacity: 0.8;
+                background-color: ghostwhite;
+                width:315px !important;
+                border:rgba(255, 0, 0, 0);
+                position: absolute;
+                left: 50%;
+                top:40%;
+                transform: translate(-50%,-50%);">
+       <div class="ui center content login">
+           <div class="ui header">
+               <h2 class="ui red">欢迎登录</h2>
+               <form action="/login/" method="post" style="position: absolute;top: 18%;left: 5%;">
+                   {% csrf_token %}
+                   <div class="field">
+                       <div class="ui left icon input">
+                            {{ form.as_p }}
+                       </div>
+                   </div>
+                   <a href="/infochange/" class="ui user icon" style="position: absolute;top: 105%;left: 2%;">更改信息</a>
+                   <a href="/register/" class="ui user icon" style="position: absolute;top: 105%;left: 70%;">立即注册</a>
+                   <button class="ui center red submit button" style="position: absolute;top: 120%;left: 35%;">登录</button>
+               </form>
+           </div>
+       </div>
+   </div>
+
+   <div class="footer" style="position: absolute; top: 75%;left: 45%;">
+       <div class="ui image">
+           <img src="{% static 'images/login_bg1.jpg' %}" style="width: 128px; height: 128px">
+       </div>
+   </div>
+
+   <div class="ui header" style="position: absolute; top: 93%;left: 26%;">
+       <p>MSXL小组竭尽全力完成，感谢小组成员的努力，致谢Semantic，Django开源框架。<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        POWERED BY PYTHON
+       </p>
+   </div>
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎来到仓库管理系统</title>
+    <link rel="stylesheet" href="{% static 'css/semantic.css' %}" media="screen" title="no title" charset="utf-8">
+</head>
+<body style="background: url({% static 'images/user_bg.jpg' %}); background-size: cover">
+    <div class="ui contain">
+                <!--菜单栏部分-->
+        <div class="ui eight item menu" style="background-color: white;height: 80px;opacity: 0.7">
+            <a href="/infomanage/" class="item">
+                <img class="ui left image" src="{% static 'images/SchoolLogo.png' %}">
+            </a>
+            <div class="item">
+                <a href="?query=storehouse" methods="get" class="ui {{ store_inver }} primary blue button">仓库信息查询</a>
+            </div>
+            <div class="item">
+                <a href="?query=supplier" class="ui {{ sup_inver }} primary blue button">供应商查询</a>
+            </div>
+
+            <div class="item">
+                <a href="?query=goods" methods="get" class="ui {{ goods_inver }} primary blue button">货物信息查询</a>
+            </div>
+
+            <!--<div class="item">-->
+                <!--<a href="?query=storage" methods="get" class="ui {{ storage_inver }} primary blue button">库存信息查询</a>-->
+            <!--</div>-->
+
+            <div class="item">
+                <a href="?query=stockout" class="ui {{ stockout_inver }} primary blue button">出库单查询</a>
+            </div>
+
+            <div class="item">
+                <a href="?query=wavehousing" class="ui {{ wavehouse_inver }} primary blue button">入库单查询</a>
+            </div>
+
+            <div class="item">
+                <a href="/logout/" class="ui  primary red button">退出系统</a>
+            </div>
+
+            <div class="item">
+                <a href="/admin/" methods="get" class="ui primary red button">后台管理</a>
+            </div>
+        </div>
+                <!--左侧个人基础信息segment-->
+        <div class="ui segment" style=" min-height: 400px;
+                    opacity: 0.5;
+                    background-color: ghostwhite;
+                    width: 220px !important;
+                    border:rgba(255, 0, 0, 0);
+                    position: absolute;
+                    left: 10%;
+                    top:45%;
+                    transform: translate(-50%,-50%);">
+            <div class="ui image">
+                <i class="ui massive user icon"></i>
+                <h3 class="ui center header">
+                    姓名:&nbsp&nbsp&nbsp {{request.user.username}}
+                </h3>
+                <h3 class="ui center">
+                    性别:&nbsp&nbsp&nbsp<i class="man icon"></i>
+                </h3>
+                <h3 class="ui center">
+                    职位:&nbsp&nbsp&nbsp{{request.user.userinfo.job}}
+                </h3>
+                <h3 class="ui center">
+                    工号:&nbsp&nbsp&nbsp{{request.user.userinfo.job_num}}
+                </h3>
+                <br>
+                <a href="/infochange/" class="ui center red button" >更改信息</a>
+        </div>
+    </div>
+        <!--主要功能区部分，最大最麻烦 0.0-->
+    <div class="ui right segment" style="background-color: ghostwhite; opacity: 0.7; width: 60%;margin-top: 2.5em;left: 30%">
+        {% if name == None %}
+        <div class="ui three item menu">
+          <a class="active red item">最近一天</a>
+          <a class="item">最近一周</a>
+          <a class="item">最近一月</a>
+        </div>
+            <div class="ui image">
+                <img src="{% static 'images/infomanage.jpg' %}" width="400" height="450">
+            </div>
+            <form herf="?querysearch=" method="get" class="ui very large icon input">
+                <input type="text" name="query" placeholder="请输入想要搜索的货物名">
+                <button class="ui button">Search</button>
+            </form>
+
+        {% endif %}
+
+        {% if name == 'storehouse' %}
+            <table class="ui red table">
+            <thead>
+                <tr>
+                    <th>仓库编号</th>
+                    <th>仓库名称</th>
+                    <th>仓库地址</th>
+                    <th>仓库备注</th>
+              </tr>
+            </thead>
+            {% for sto in each_object %}
+            <tbody>
+                <tr>
+                  <td>{{sto.stoID }}</td>
+                  <td>{{ sto.sto_name }}</td>
+                  <td>{{ sto.sto_locat }}</td>
+                  <td>{{ sto.sto_ps }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+        {% endif %}
+        <!--供应商查询-->
+        {% if name == 'supplier' %}
+            <table class="ui red table">
+            <thead>
+                <tr>
+                    <th>供应商编号</th>
+                    <th>供应商名称</th>
+                    <th>供应商电话</th>
+              </tr>
+            </thead>
+            {% for sup in each_object %}
+            <tbody>
+                <tr>
+                  <td>{{sup.supID}}</td>
+                  <td>{{ sup.sup_name }}</td>
+                  <td>{{ sup.sup_tel }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+        {% endif %}
+		
+        <!--货物查询查询-->
+        {% if name == 'goods' %}
+        <form class="ui" method="get">
+                <tr>
+                    <th class="ui header">仓库名:</th>
+                    <select  name="goodsstore">
+                      <option  value="100005">家用电器仓</option>
+                      <option  value="100008">饮料食品仓</option>
+                      <option  value="100006">厨房用品仓</option>
+                      <option  value="100007">清洁用品仓</option>
+                      <option  value="100009">冷冻食品仓</option>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <th>货物名称or编号:</th>
+                    <input  class="ui" type="text" name="goodsInfo" size="10" >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <th>价格区间:</th>
+                    <input  class="ui" type="text" name="goodsMAX" size="5" >----
+                    <input  class="ui" type="text" name="goodsMIN" size="5" >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button  class="ui red button" >筛选</button>
+                </tr>
+        </form>
+            <table class="ui red table">
+            <thead>
+                <tr>
+					<th>所属仓库名</th>
+                    <th>货物编号</th>
+                    <th>货物名称</th>
+					<th>单价</th>
+                    <th>库存量</th>
+                    <th>最大库存量</th>
+					<th>计量单位</th>
+              </tr>
+            </thead>
+            {% for good in each_object %}
+            <tbody>
+                <tr>
+                  <td>{{ good.goods_store }}</td>
+                  <td>{{ good.goodsID }}</td>
+                  <td>{{ good.goods_name }}</td>
+				  <td>{{ good.goods_price}}</td>
+
+                  {% if good.wave_goods.in_amount %}
+                      {% if good.good_amount %}
+                            {% if good.stock_goods.out_amount %}
+                                <td>{{ good.good_amount|add:good.wave_goods.in_amount|add:good.stock_goods.out_amount }}</td>
+                            {% else %}
+                              <td>{{ good.good_amount|add:good.wave_goods.in_amount }}</td>
+                            {% endif %}
+                      {% else %}
+                        <td>{{ good.good_amount|add:good.wave_goods.in_amount }}</td>
+                      {% endif %}
+                  {% else %}
+                    <td>{{ good.good_amount }}</td>
+                  {% endif %}
+
+                  <td>{{ good.goods_max}}</td>
+				  <td>{{ good.goods_mens }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+            {% if messages %}
+           <ul class=" ui red header messages" style="background-color: ghostwhite; position: absolute;top: 100%;left: 35%;">
+               {% for message in messages %}
+               <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+               {% endfor %}
+           </ul>
+            {% endif %}
+        {% endif %}
+		        <!--库存查询查询-->
+        {% if name == 'storage' %}
+        <form class="ui" method="get">
+            <tr>
+                <th class="ui header">仓库名:</th>
+                <select name="storagestore">
+                  <option  value="100005">家用电器仓</option>
+                  <option  value="100008">饮料食品仓</option>
+                  <option  value="100006">厨房用品仓</option>
+                  <option  value="100007">清洁用品仓</option>
+                  <option  value="100009">冷冻食品仓</option>
+                </select>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <th>货物名称:</th>
+                <input  class="ui" type="text" name="goodsName" size="10" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <th>货物编号:</th>
+                <input  class="ui" type="text" name="goodsID" size="10" >
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button class="ui red button" >筛选</button>
+            </tr>
+        </form>
+            <table class="ui red table">
+            <thead>
+                <tr>
+					<th>所属仓库名</th>
+                    <th>货物名称</th>
+					<th>现有库存</th>
+					<th>最大库存量</th>
+                    <th>更新日期</th>
+              </tr>
+            </thead>
+            {% for good in each_object %}
+            <tbody>
+                <tr>
+                  <td>{{ good.goods_store }}</td>
+                  <td>{{ good.goods_name }}</td>
+				  <td>{{ good.storage_amount}}</td>
+				  <td>{{ good.storage_max }}</td>
+                  <td>{{ good.create_date }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+            {% if messages %}
+               <ul class=" ui red header messages" style="background-color: ghostwhite; position: absolute;top: 100%;left: 35%;">
+                   {% for message in messages %}
+                   <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                   {% endfor %}
+               </ul>
+            {% endif %}
+
+        {% endif %}
+
+        <!--出库单查询-->
+        {% if name == 'wavehousing' %}
+            <form class="ui" method="get">
+                <tr>
+                    <th class="ui header">仓库名:</th>
+                    <select name="wavestore">
+                      <option  value="100005">家用电器仓</option>
+                      <option  value="100008">饮料食品仓</option>
+                      <option  value="100006">厨房用品仓</option>
+                      <option  value="100007">清洁用品仓</option>
+                      <option  value="100009">冷冻食品仓</option>
+                    </select>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <th>供应商名称:</th>
+                    <input  class="ui" type="text" name="supInfo" size="10" >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <th>货物名称:</th>
+                    <input  class="ui" type="text" name="goodsInfo" size="10" >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button class="ui red  button" >筛选</button>
+                </tr>
+            </form>
+            <table class="ui red table">
+            <thead>
+                <tr>
+					<th>所属仓库名</th>
+                    <th>货物名称</th>
+                    <th>供应商名称</th>
+                    <th>经办人姓名</th>
+					<th>入库价格</th>
+                    <th>入库数量</th>
+                    <th>入库时间</th>
+                    <th>入库备注</th>
+              </tr>
+            </thead>
+            {% for good in each_object %}
+            <tbody>
+                <tr>
+                  <td>{{ good.sto_name }}</td>
+                  <td>{{ good.goods_name }}</td>
+                  <td>{{ good.sup_name }}</td>
+                  <td>{{ good.res_person }}</td>
+				  <td>{{ good.in_price }}</td>
+				  <td>{{ good.in_amount }}</td>
+                  <td>{{ good.in_date }}</td>
+                  <td>{{ good.in_ps }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+            {% if messages %}
+               <ul class=" ui red header messages" style="background-color: ghostwhite; position: absolute;top: 100%;left: 35%;">
+                   {% for message in messages %}
+                   <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+                   {% endfor %}
+               </ul>
+            {% endif %}
+        {% endif %}
+        <!--出库单查询-->
+        {% if name == 'stockout' %}
+            <form class="ui" method="get">
+                    <tr>
+                        <th class="ui header">仓库名:</th>
+                        <select name="stockoutstore">
+                          <option  value="100005">家用电器仓</option>
+                          <option  value="100008">饮料食品仓</option>
+                          <option  value="100006">厨房用品仓</option>
+                          <option  value="100007">清洁用品仓</option>
+                          <option  value="100009">冷冻食品仓</option>
+                        </select>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <th>供应商名称:</th>
+                        <input  class="ui" type="text" name="supInfo" size="10" >
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <th>货物名称:</th>
+                        <input  class="ui" type="text" name="goodsInfo" size="10" >
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="ui red button" >筛选</button>
+                    </tr>
+                </form>
+            <table class="ui red table">
+            <thead>
+                <tr>
+					<th>所属仓库名</th>
+                    <th>货物名称</th>
+                    <th>供应商名称</th>
+                    <th>经办人姓名</th>
+					<th>出库价格</th>
+                    <th>出库数量</th>
+                    <th>出库时间</th>
+                    <th>出库备注</th>
+              </tr>
+            </thead>
+            {% for good in each_object %}
+            <tbody>
+                <tr>
+                  <td>{{ good.sto_name }}</td>
+                  <td>{{ good.goods_name }}</td>
+                  <td>{{ good.sup_name }}</td>
+                  <td>{{ good.res_person }}</td>
+				  <td>{{ good.out_price}}</td>
+				  <td>{{ good.out_amount }}</td>
+                  <td>{{ good.out_date }}</td>
+                  <td>{{ good.out_ps }}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+            </table>
+
+            {% if messages %}
+           <ul class=" ui red header messages" style="background-color: ghostwhite; position: absolute;top: 100%;left: 35%;">
+               {% for message in messages %}
+               <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+               {% endfor %}
+           </ul>
+            {% endif %}
+
+        {% endif %}
+        <div class="ui header">
+            {% for pg in each_object.paginator.page_range %}
+                {% if each_object.number == pg %}
+                    <a  class="ui active red header" href="?query={{ name }}&page={{ pg }}">&nbsp;{{ pg }}</a>
+                {% else %}
+                    <a  class="ui header" href="?query={{ name }}&page={{ pg }}">&nbsp;{{ pg }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+        </div>
+        <div class="ui large buttons" style="position: absolute;top: 90%;left: 53%">
+          {% if each_object.has_previous %}
+            <a href="?query={{ name }}&page={{ each_object.previous_page_number }}" class="ui red button">上一页</a>
+          {% else %}
+            <a class="ui button">上一页</a>
+          {% endif %}
+          <div class=" ui or"></div>
+          {% if each_object.has_next %}
+            <a href="?query={{ name }}&page={{ each_object.next_page_number }}"  class="ui blue button active">下一页</a>
+          {% else %}
+             <a class="ui button">下一页</a>
+          {% endif %}
+        </div>
+    <!--底部footer部分-->
+    <div class="ui footer" style="position: absolute; top: 85%;left: 4%;">
+       <div class="ui image">
+           <img src="{% static 'images/login_bg1.jpg' %}" style="width: 128px; height: 128px">
+       </div>
+   </div>
+    <div class="ui header" style="position: absolute; top: 95%;left: 38%;">
+       <p>MSXL小组竭尽全力完成，感谢小组成员的努力，致谢Semantic，Django开源框架。<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        POWERED BY PYTHON
+       </p>
+   </div>
+
+</body>
+</html>
